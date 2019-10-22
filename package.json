@@ -1,0 +1,24 @@
+{
+  "name": "omics-central-backend",
+  "version": "1.0.0",
+  "description": "Serverless backend for the Omics Central data analytics dashboard",
+  "scripts": {
+    "test": "serverless-bundle test"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/singha53/omics-central-backend.git"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.536.0",
+    "serverless-bundle": "^1.2.2",
+    "serverless-dotenv-plugin": "^2.1.1",
+    "serverless-offline": "^5.3.3"
+  },
+  "dependencies": {
+    "stripe": "^7.9.1",
+    "uuid": "^3.3.3"
+  }
+}

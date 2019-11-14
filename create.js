@@ -8,6 +8,7 @@ const ECS_TASK_VPC_SUBNET_1 = process.env.ECS_TASK_VPC_SUBNET_1;
 const ECS_TASK_VPC_SUBNET_2 = process.env.ECS_TASK_VPC_SUBNET_2;
 const AWS_REGION = process.env.AWS_REGION;
 
+const ecsApi = require('./ecs');
 
 export async function main(event, context) {
   const data = JSON.parse(event.body);

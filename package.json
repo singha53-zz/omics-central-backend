@@ -5,7 +5,7 @@
   "scripts": {
     "test": "serverless-bundle test"
   },
-  "author": "",
+  "author": "Amrit Singh",
   "license": "MIT",
   "repository": {
     "type": "git",

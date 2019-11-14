@@ -6,7 +6,7 @@ const ECS_CLUSTER_NAME = process.env.ECS_CLUSTER_NAME;
 const ECS_TASK_DEFINITION = process.env.ECS_TASK_DEFINITION;
 const ECS_TASK_VPC_SUBNET_1 = process.env.ECS_TASK_VPC_SUBNET_1;
 const ECS_TASK_VPC_SUBNET_2 = process.env.ECS_TASK_VPC_SUBNET_2;
-const AWS_REGION = process.env.AWS_REGION;
+// const AWS_REGION = process.env.AWS_REGION;
 
 // const ecsApi = require('./ecs');
 
@@ -61,34 +61,11 @@ var runThumbnailGenerateTask = () => {
     overrides: {
       containerOverrides: [
         {
-          name: 'ffmpeg-thumb',
-          environment: [
-            {
-              name: 'INPUT_VIDEO_FILE_URL',
-              value: `${s3_video_url}`
-            },
-            {
-              name: 'OUTPUT_THUMBS_FILE_NAME',
-              value: `${thumbnail_file}`
-            },
-            {
-              name: 'POSITION_TIME_DURATION',
-              value: `${frame_pos}`
-            },
-            {
-              name: 'OUTPUT_S3_PATH',
-              value: `${OUTPUT_S3_PATH}`
-            },
-            {
-              name: 'AWS_REGION',
-              value: `${OUTPUT_S3_AWS_REGION}`
-            }
-          ]
+          name: 'ffmpeg-thumb'
         }
       ]
     }
   };
-  console.log("run ECS params: " + JSON.stringify(params))
+  console.log("run ECS params: " + JSON.stringify(params));
   // ecsApi.runECSTask(params);
-
-}
+};

@@ -8,9 +8,9 @@ const ECS_TASK_VPC_SUBNET_1 = process.env.ECS_TASK_VPC_SUBNET_1;
 const ECS_TASK_VPC_SUBNET_2 = process.env.ECS_TASK_VPC_SUBNET_2;
 const AWS_REGION = process.env.AWS_REGION;
 
-const ecsApi = require('./ecs');
+// const ecsApi = require('./ecs');
 
-export async function main(event, context) {
+export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
   const params = {
     TableName: process.env.tableName,
@@ -24,9 +24,71 @@ export async function main(event, context) {
   };
 
   try {
+    const bucket = event.Records[0].s3.bucket.name;
+    const key = event.Records[0].s3.object.key;
+
+    console.log(JSON.stringify(event));
+    console.log(`A new video file '${key}' was uploaded to '${bucket}' for processing.`);
+
+    runThumbnailGenerateTask();
+
     await dynamoDbLib.call("put", params);
     return success(params.Item);
   } catch (e) {
     return failure({ status: false });
   }
+}
+
+
+var runThumbnailGenerateTask = () => {
+
+  // run an ECS Fargate task
+  const params = {
+    cluster: `${ECS_CLUSTER_NAME}`,
+    launchType: 'FARGATE',
+    taskDefinition: `${ECS_TASK_DEFINITION}`,
+    count: 1,
+    platformVersion:'LATEST',
+    networkConfiguration: {
+      awsvpcConfiguration: {
+          subnets: [
+              `${ECS_TASK_VPC_SUBNET_1}`,
+              `${ECS_TASK_VPC_SUBNET_2}`
+          ],
+          assignPublicIp: 'ENABLED'
+      }
+    },
+    overrides: {
+      containerOverrides: [
+        {
+          name: 'ffmpeg-thumb',
+          environment: [
+            {
+              name: 'INPUT_VIDEO_FILE_URL',
+              value: `${s3_video_url}`
+            },
+            {
+              name: 'OUTPUT_THUMBS_FILE_NAME',
+              value: `${thumbnail_file}`
+            },
+            {
+              name: 'POSITION_TIME_DURATION',
+              value: `${frame_pos}`
+            },
+            {
+              name: 'OUTPUT_S3_PATH',
+              value: `${OUTPUT_S3_PATH}`
+            },
+            {
+              name: 'AWS_REGION',
+              value: `${OUTPUT_S3_AWS_REGION}`
+            }
+          ]
+        }
+      ]
+    }
+  };
+  console.log("run ECS params: " + JSON.stringify(params))
+  // ecsApi.runECSTask(params);
+
 }

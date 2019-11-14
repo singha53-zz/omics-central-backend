@@ -15,6 +15,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
   tableName: ${self:custom.stage}-notes-table
+  execRoleArn: { "Fn::Join" : ["", [ "arn:aws:iam::", { "Ref" : "AWS::AccountId" }, ":role/ecsTaskExecutionRole" ] ] }
 
 provider:
   name: aws
@@ -31,7 +32,6 @@ provider:
     ECS_TASK_VPC_SUBNET_1: ${env:ecsTaskVpcSubnet1}
     ECS_TASK_VPC_SUBNET_2: ${env:ecsTaskVpcSubnet2}
     ECS_CLUSTER_NAME: ${env:clusterName}
-    execRoleArn: { "Fn::Join" : ["", [ "arn:aws:iam::", { "Ref" : "AWS::AccountId" }, ":role/ecsTaskExecutionRole" ] ] }
 
   iamRoleStatements:
     - Effect: Allow
@@ -58,7 +58,7 @@ provider:
     - Effect: "Allow"
       Action:
         - s3:GetObject
-      Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+      Resource: "arn:aws:s3:::${env:S3_BUCKET}/*"
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js

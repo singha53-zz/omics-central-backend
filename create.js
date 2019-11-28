@@ -6,7 +6,6 @@ const ECS_CLUSTER_NAME = process.env.ECS_CLUSTER_NAME;
 const ECS_TASK_DEFINITION = process.env.ECS_TASK_DEFINITION;
 const ECS_TASK_VPC_SUBNET_1 = process.env.ECS_TASK_VPC_SUBNET_1;
 const ECS_TASK_VPC_SUBNET_2 = process.env.ECS_TASK_VPC_SUBNET_2;
-// const AWS_REGION = process.env.AWS_REGION;
 
 // const ecsApi = require('./ecs');
 
@@ -24,12 +23,12 @@ export async function main(event, context, callback) {
   };
 
   try {
-    const bucket = event.Records[0].s3.bucket.name;
-    const key = event.Records[0].s3.object.key;
+    // const bucket = event.Records[0].s3.bucket.name;
+    // const key = event.Records[0].s3.object.key;
 
-    console.log(JSON.stringify(event));
-    console.log(`A new video file '${key}' was uploaded to '${bucket}' for processing.`);
-
+    // console.log(JSON.stringify(event));
+    // console.log(`A new video file '${key}' was uploaded to '${bucket}' for processing.`);
+     console.log(event);
     runThumbnailGenerateTask();
 
     await dynamoDbLib.call("put", params);
@@ -40,7 +39,7 @@ export async function main(event, context, callback) {
 }
 
 
-var runThumbnailGenerateTask = () => {
+const runThumbnailGenerateTask = () => {
 
   // run an ECS Fargate task
   const params = {

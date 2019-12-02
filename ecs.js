@@ -1,5 +1,3 @@
-'use strict';
-
 const AWS = require('aws-sdk');
 const ECS = new AWS.ECS();
 
@@ -13,4 +11,4 @@ module.exports.runECSTask = params => {
       }
       return;
   });
-}
+};

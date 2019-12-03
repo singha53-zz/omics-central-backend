@@ -58,7 +58,8 @@ provider:
     - Effect: "Allow"
       Action:
         - s3:GetObject
-      Resource: "arn:aws:s3:::${env:S3_BUCKET}/*"
+      Resource: 
+        - "Fn::GetAtt": [ AttachmentsBucket, Arn ]
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js

@@ -13,11 +13,16 @@ const ECS = new AWS.ECS();
 // const ecsApi = require('./ecs');
 
 export async function main(event, context, callback) {
+  console.log('event: ' + event);
   const data = JSON.parse(event.body);
   const userID = event.requestContext.identity.cognitoIdentityId;
   const noteID = uuid.v1();
+  const tableName = process.env.tableName;
+  // const S3_BUCKET = process.env.S3_BUCKET;
+  // console.log(S3_BUCKET);
+
   const params = {
-    TableName: process.env.tableName,
+    TableName: tableName,
     Item: {
       userId: userID,
       noteId: noteID,
@@ -29,7 +34,7 @@ export async function main(event, context, callback) {
 
   try {
     console.log(event);
-    runThumbnailGenerateTask(userID, noteID);
+    runThumbnailGenerateTask(userID, noteID, tableName);
 
     await dynamoDbLib.call("put", params);
     return success(params.Item);
@@ -39,7 +44,7 @@ export async function main(event, context, callback) {
 }
 
 
-const runThumbnailGenerateTask = (USER_ID, NOTE_ID) => {
+const runThumbnailGenerateTask = (USER_ID, NOTE_ID, TABLE_NAME) => {
 
   // run an ECS Fargate task
   const params = {
@@ -69,6 +74,10 @@ const runThumbnailGenerateTask = (USER_ID, NOTE_ID) => {
             {
               name: 'NOTE_ID',
               value: `${NOTE_ID}`
+            },
+            {
+              name: 'TABLE_NAME',
+              value: `${TABLE_NAME}`
             }
           ]
         }

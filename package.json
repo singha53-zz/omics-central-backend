@@ -15,7 +15,8 @@
     "aws-sdk": "^2.536.0",
     "serverless-bundle": "^1.2.2",
     "serverless-dotenv-plugin": "^2.1.1",
-    "serverless-offline": "^5.3.3"
+    "serverless-offline": "^5.3.3",
+    "serverless-pseudo-parameters": "2.5.0"
   },
   "dependencies": {
     "stripe": "^7.9.1",

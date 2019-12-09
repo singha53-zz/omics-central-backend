@@ -6,6 +6,8 @@ const ECS_CLUSTER_NAME = process.env.ECS_CLUSTER_NAME;
 const ECS_TASK_DEFINITION = process.env.ECS_TASK_DEFINITION;
 const ECS_TASK_VPC_SUBNET_1 = process.env.ECS_TASK_VPC_SUBNET_1;
 const ECS_TASK_VPC_SUBNET_2 = process.env.ECS_TASK_VPC_SUBNET_2;
+const tableName = process.env.tableName;
+const S3_BUCKET = process.env.S3_BUCKET;
 
 const AWS = require('aws-sdk');
 const ECS = new AWS.ECS();
@@ -17,9 +19,6 @@ export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
   const userID = event.requestContext.identity.cognitoIdentityId;
   const noteID = uuid.v1();
-  const tableName = process.env.tableName;
-  // const S3_BUCKET = process.env.S3_BUCKET;
-  // console.log(S3_BUCKET);
 
   const params = {
     TableName: tableName,
@@ -34,7 +33,7 @@ export async function main(event, context, callback) {
 
   try {
     console.log(event);
-    runThumbnailGenerateTask(userID, noteID, tableName);
+    runThumbnailGenerateTask(userID, noteID, tableName, S3_BUCKET);
 
     await dynamoDbLib.call("put", params);
     return success(params.Item);
@@ -44,7 +43,7 @@ export async function main(event, context, callback) {
 }
 
 
-const runThumbnailGenerateTask = (USER_ID, NOTE_ID, TABLE_NAME) => {
+const runThumbnailGenerateTask = (USER_ID, NOTE_ID, TABLE_NAME, S3_BUCKET) => {
 
   // run an ECS Fargate task
   const params = {
@@ -78,6 +77,10 @@ const runThumbnailGenerateTask = (USER_ID, NOTE_ID, TABLE_NAME) => {
             {
               name: 'TABLE_NAME',
               value: `${TABLE_NAME}`
+            },
+            {
+              name: 'S3_BUCKET',
+              value: `${S3_BUCKET}`
             }
           ]
         }

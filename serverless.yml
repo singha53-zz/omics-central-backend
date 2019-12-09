@@ -15,18 +15,23 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # Set the table name here so we can use it while testing locally
   tableName: ${self:custom.stage}-notes-table
+  execRoleArn: { "Fn::Join" : ["", [ "arn:aws:iam::", { "Ref" : "AWS::AccountId" }, ":role/ecsTaskExecutionRole" ] ] }
 
 provider:
   name: aws
   runtime: nodejs10.x
   stage: dev
-  region: ca-central-1
+  region: us-east-1
 
   # These environment variables are made available to our functions
   # under process.env.
   environment:
     tableName: ${self:custom.tableName}
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
+    ECS_TASK_DEFINITION: ${env:ecsTaskName}
+    ECS_TASK_VPC_SUBNET_1: ${env:ecsTaskVpcSubnet1}
+    ECS_TASK_VPC_SUBNET_2: ${env:ecsTaskVpcSubnet2}
+    ECS_CLUSTER_NAME: ${env:clusterName}
 
   iamRoleStatements:
     - Effect: Allow
@@ -42,6 +47,19 @@ provider:
       # the specific table for the stage
       Resource:
         - "Fn::GetAtt": [ NotesTable, Arn ]
+    - Effect: "Allow"
+      Action:
+        - ecs:RunTask
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - iam:PassRole
+      Resource: ${self:custom.execRoleArn}
+    - Effect: "Allow"
+      Action:
+        - s3:GetObject
+      Resource: 
+        - "Fn::GetAtt": [ AttachmentsBucket, Arn ]
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js

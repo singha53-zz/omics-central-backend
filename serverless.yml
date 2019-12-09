@@ -28,10 +28,10 @@ provider:
   environment:
     tableName: ${self:custom.tableName}
     stripeSecretKey: ${env:STRIPE_SECRET_KEY}
-    ECS_TASK_DEFINITION: ${env:ecsTaskName}
-    ECS_TASK_VPC_SUBNET_1: ${env:ecsTaskVpcSubnet1}
-    ECS_TASK_VPC_SUBNET_2: ${env:ecsTaskVpcSubnet2}
-    ECS_CLUSTER_NAME: ${env:clusterName}
+    ECS_TASK_DEFINITION: ${env:ECS_TASK_DEFINITION}
+    ECS_TASK_VPC_SUBNET_1: ${env:ECS_TASK_VPC_SUBNET_1}
+    ECS_TASK_VPC_SUBNET_2: ${env:ECS_TASK_VPC_SUBNET_2}
+    ECS_CLUSTER_NAME: ${env:ECS_CLUSTER_NAME}
 
   iamRoleStatements:
     - Effect: Allow
